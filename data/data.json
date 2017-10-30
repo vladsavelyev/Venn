@@ -1,0 +1,21 @@
+{
+    "file": "https://www.dropbox.com/s/zo6cwajios7bsm1/data.csv",
+    "name": "intersect vcfs",
+    "header": 0,
+    "skip": 0,
+    "separator": ";",
+    "meta": [
+        {
+            "type": "id",
+            "index": 0,
+            "name": "Variant"
+        }
+    ],
+    "set": [
+        {
+            "format": "binary",
+            "start": 2,
+            "end": 3
+        }
+    ]
+}
