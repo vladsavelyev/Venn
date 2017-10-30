@@ -1,5 +1,5 @@
 {
-    "file": "https://github.com/vladsaveliev/Venn/blob/master/data/data.csv",
+    "file": "https://raw.githubusercontent.com/vladsaveliev/Venn/master/data/data.csv",
     "name": "intersect vcfs",
     "header": 0,
     "skip": 0,
