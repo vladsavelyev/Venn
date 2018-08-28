@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 from os.path import join, isfile, abspath, dirname
 
-name = 'venn'
-script_name = 'venn'
-package_name = 'venn'
+
+name = script_name = package_name = 'venn_bed'
 
 
 from setuptools import setup, find_packages
@@ -37,7 +36,7 @@ else:
         include_package_data=True,
         zip_safe=False,
         scripts=[
-            join('scripts', 'venn'),
+            join('scripts', script_name),
         ],
         install_requires=get_reqs(),
         setup_requires=['numpy'],

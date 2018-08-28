@@ -7,22 +7,22 @@ from optparse import OptionParser
 from os.path import dirname, basename, join, splitext, isfile
 
 from ngs_utils.bed_utils import verify_bed
-from ngs_utils.file_utils import adjust_path, safe_mkdir, verify_file
+from ngs_utils.file_utils import adjust_path, safe_mkdir, verify_file, splitext_plus
 from ngs_utils.logger import critical
 
-from venn import venn
-from venn.venn import get_upset_file
+from venn_bed import venn
+from venn_bed.venn import get_upset_file
 
 
 def main():
-    parser = OptionParser(usage='Usage: ' + basename(__file__) + ' label1:bed_or_vcf1 label2:bed_or_vcf2 ... -o results_dir')
+    parser = OptionParser(usage='Usage: ' + basename(__file__) + ' label1=bed_or_vcf1 label2=bed_or_vcf2 ... -o results_dir')
     parser.add_option('-o', '--output-dir', dest='output_dir')
     parser.add_option('-r', '--regions', dest='regions')
     (opts, args) = parser.parse_args(sys.argv[1:])
 
     values = [value.split('=') for value in args]
     input_fpaths = [verify_file(v[1] if len(v) == 2 else v[0]) for v in values]
-    names_map = {verify_file(v[1] if len(v) == 2 else v[0]): v[0] for v in values}
+    names_map =    {verify_file(v[1] if len(v) == 2 else v[0]): splitext_plus(v[0])[0] for v in values}
 
     ''' Example VCFs:
     input_fpaths = tuple([join(vcfs_dirpath, vcf_name) for vcf_name in [
@@ -68,7 +68,7 @@ def main():
     upset_json = upset_csv.replace('.csv', '.json')
     with open(upset_json, 'w') as out:
         json.dump(dict(
-            file='https://www.dropbox.com/s/zo6cwajios7bsm1/' + basename(upset_csv),
+            file='http://localhost:8000/data/variants/' + basename(upset_csv),
             name='intersect vcfs',
             header=0,
             skip=0,
@@ -76,21 +76,21 @@ def main():
             meta=[
                 {"type": "id", "index": 0, "name": "Variant"}
             ],
-            set=[
-                {"format": "binary", "start": 1, 'end': len(input_fpaths)}
+            sets=[
+                {"format": "binary", "start": 2, 'end': len(input_fpaths) + 1}
             ],
     ), out, indent=4, separators=(',', ': '))
 
     print(upset_json)
 
-    # # Make Venn
-    # intersection_size_by_subset = venn.find_pairwise_intersections(work_dir, input_fpaths, regions_file=regions_file)
-    # json_txt = venn.save_venn_diagram_data(intersection_size_by_subset, names_map)
-    # html_file = venn.write_html(output_dir, json_txt, input_fpaths)
-    #
-    # print('-----------------------')
-    # print('')
-    # print('HTML: ' + html_file)
+    # Make Venn
+    intersection_size_by_subset = venn.find_pairwise_intersections(work_dir, input_fpaths, regions_file=regions_file)
+    json_txt = venn.save_venn_diagram_data(intersection_size_by_subset, names_map)
+    html_file = venn.write_html(output_dir, json_txt, input_fpaths)
+
+    print('-----------------------')
+    print('')
+    print('HTML: ' + html_file)
 
 
 if __name__ == '__main__':
